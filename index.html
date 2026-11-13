@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高齡者隨身智慧電子病歷 | Senior Global EHR</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-sub: #334155;
+            --primary-glow: #38bdf8;
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-red: #f43f5e;
+            --accent-yellow: #f59e0b;
+            --accent-green: #10b981;
+            --border-color: #475569;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        /* Header Header Section */
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            border-bottom: 2px solid var(--primary);
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(14, 165, 233, 0.2);
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .app-title h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        .app-title p {
+            font-size: 0.9rem;
+            color: var(--primary-glow);
+            font-weight: 500;
+        }
+
+        /* Language Selector Switcher */
+        .lang-switcher {
+            display: flex;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 5px;
+            border-radius: 50px;
+            gap: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+        }
+
+        /* Patient ID Card Banner */
+        .patient-card-main {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .patient-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .patient-info-item .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .patient-info-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 4px;
+        }
+
+        .patient-info-item .value.highlight {
+            color: var(--accent-yellow);
+        }
+
+        /* Main Content Sections */
+        .content-body {
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .section-card {
+            background: var(--bg-card-sub);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            color: var(--primary-glow);
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .section-header i {
+            color: var(--primary);
+        }
+
+        /* Info Grid & Boxes */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .info-box {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-box .title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .info-box .val {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Tags / Badges for Medical History / Medications */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .medical-tag {
+            background: rgba(14, 165, 233, 0.15);
+            color: #bae6fd;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            padding: 8px 14px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .medical-tag i {
+            font-size: 0.75rem;
+            color: var(--primary-glow);
+        }
+
+        .medical-tag.alert {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fecdd3;
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+        .medical-tag.alert i {
+            color: var(--accent-red);
+        }
+
+        .medical-tag.chronic {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fde68a;
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+        .medical-tag.chronic i {
+            color: var(--accent-yellow);
+        }
+
+        /* Timeline / Structured List for Surgeries & Hospitalization */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timeline-info h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .timeline-info p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .timeline-date {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--primary-glow);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* Emergency Action Banner */
+        .emergency-banner {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(15, 23, 42, 0.8));
+            border: 1px solid var(--accent-red);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .emergency-info h3 {
+            color: #fecdd3;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .emergency-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .emergency-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-deep);
+        }
+
+        /* Responsive Breakpoints */
+        @media(max-width: 600px) {
+            body { padding: 10px; }
+            .header { padding: 25px 15px; }
+            .content-body { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 頂部標題與多國語言切換 -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+                <div class="app-title">
+                    <h1 id="ui-app-title">高齡者隨身智慧電子病歷</h1>
+                    <p id="ui-app-subtitle">Senior Emergency Global Health Record</p>
+                </div>
+            </div>
+
+            <!-- 語言切換按鈕群組 -->
+            <div class="lang-switcher">
+                <button class="lang-btn active" onclick="switchLanguage('zh')">中文</button>
+                <button class="lang-btn" onclick="switchLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="switchLanguage('ja')">日本語</button>
+                <button class="lang-btn" onclick="switchLanguage('ko')">한국어</button>
+                <button class="lang-btn" onclick="switchLanguage('vi')">Tiếng Việt</button>
+            </div>
+        </div>
+
+        <!-- 個人基本資料摘要卡 (78歲長者設定) -->
+        <div class="patient-card-main">
+            <div class="patient-info-item">
+                <span class="label" data-i18n="lbl-name">姓名 / Full Name</span>
+                <span class="value">王大山 (WANG, DA-SHAN)</span>
+            </div>
+            <div class="patient-info-item">
+                <span class="label" data-i18n="lbl-dob">出生年月日 / Age</span>
+                <span class="value">1948-11-05 (78歲 / yrs)</span>
+            </div>
+            <div class="patient-info-item">
+                <span class="label" data-i18n="lbl-blood">血型 / Blood Type</span>
+                <span class="value highlight">O Rh+ (帶有心律調節器警示)</span>
+            </div>
+            <div class="patient-info-item">
+                <span class="label" data-i18n="lbl-emergency">緊急聯絡人 / Contact</span>
+                <span class="value">王小明 (兒子) +886 912-345-678</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 內容主體 -->
+    <div class="content-body">
+
+        <!-- 0. 緊急醫療警示看板 -->
+        <div class="emergency-banner">
+            <div class="emergency-info">
+                <h3 data-i18n="emg-title"><i class="fa-solid fa-triangle-exclamation"></i> 植入式醫療器材警示 (Implant Alert)</h3>
+                <p data-i18n="emg-desc">患者體內裝有心臟心律調節器（Pacemaker），請避免進行強磁場 MRI 掃描。</p>
+            </div>
+            <a href="tel:+886912345678" class="emergency-btn">
+                <i class="fa-solid fa-phone-volume"></i> <span data-i18n="emg-call">撥打緊急家屬電話</span>
+            </a>
+        </div>
+
+        <!-- 1. 個人史與生理狀態 Personal History -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fa-solid fa-user-doctor"></i>
+                <span data-i18n="sec-personal">個人與生理史 (Personal & Lifestyle History)</span>
+            </div>
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="title" data-i18n="lbl-mobility">行動能力 / Mobility</div>
+                    <div class="val" data-i18n="val-mobility">使用四腳拐杖輔助行走 (Quad Cane)</div>
+                </div>
+                <div class="info-box">
+                    <div class="title" data-i18n="lbl-cognition">認知狀態 / Cognition</div>
+                    <div class="val" data-i18n="val-cognition">輕度認知功能退化 (Mild Cognitive Impairment)</div>
+                </div>
+                <div class="info-box">
+                    <div class="title" data-i18n="lbl-allergy">藥物過敏 / Drug Allergies</div>
+                    <div class="val" style="color: var(--accent-red);" data-i18n="val-allergy">盤尼西林、阿斯匹靈 (Penicillin, Aspirin)</div>
+                </div>
+                <div class="info-box">
+                    <div class="title" data-i18n="lbl-diet">飲食習慣 / Diet & Swallowing</div>
+                    <div class="val" data-i18n="val-diet">軟質地飲食、小口慢食 (Soft Diet)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 慢性病與疾病史 Chronic & Disease History -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span data-i18n="sec-chronic">慢性病與重大疾病史 (Chronic Disease History)</span>
+            </div>
+            <div class="tag-list">
+                <span class="medical-tag chronic"><i class="fa-solid fa-circle-exclamation"></i> <span data-i18n="chr-1">第 2 型糖尿病合併周邊神經病變 (Type 2 Diabetes)</span></span>
+                <span class="medical-tag chronic"><i class="fa-solid fa-circle-exclamation"></i> <span data-i18n="chr-2">原發性高血壓第 2 期 (Essential Hypertension Stage 2)</span></span>
+                <span class="medical-tag chronic"><i class="fa-solid fa-circle-exclamation"></i> <span data-i18n="chr-3">慢性腎臟病第 3 期 (CKD Stage 3)</span></span>
+                <span class="medical-tag chronic"><i class="fa-solid fa-circle-exclamation"></i> <span data-i18n="chr-4">退化性膝關節炎 (Osteoarthritis of Knees)</span></span>
+            </div>
+        </div>
+
+        <!-- 3. 過去家族史 Family History -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fa-solid fa-people-roof"></i>
+                <span data-i18n="sec-family">家族遺傳病史 (Family Medical History)</span>
+            </div>
+            <div class="tag-list">
+                <span class="medical-tag alert"><i class="fa-solid fa-triangle-exclamation"></i> <span data-i18n="fam-1">已故父親：腦中風病史 (Father: Stroke History)</span></span>
+                <span class="medical-tag alert"><i class="fa-solid fa-triangle-exclamation"></i> <span data-i18n="fam-2">已故母親：阿茲海默症 (Mother: Alzheimer's Disease)</span></span>
+            </div>
+        </div>
+
+        <!-- 4. 手術與重大就醫紀錄 Surgical & Hospitalization History -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fa-solid fa-hospital"></i>
+                <span data-i18n="sec-surgery">手術、外傷與重大住院紀錄 (Surgical & Hospitalization History)</span>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-info">
+                        <h4 data-i18n="surg-1-title">心臟心律調節器植入術 (Permanent Pacemaker Implantation)</h4>
+                        <p data-i18n="surg-1-desc">因症狀性心搏過緩於台大醫院施行，定期回診追蹤</p>
+                    </div>
+                    <div class="timeline-date">2022-08</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-info">
+                        <h4 data-i18n="surg-2-title">右側白內障超音波乳化暨人工水晶體植入 (Cataract Surgery)</h4>
+                        <p data-i18n="surg-2-desc">術後視力恢復良好，規律點抗發炎眼藥水</p>
+                    </div>
+                    <div class="timeline-date">2020-03</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-info">
+                        <h4 data-i18n="surg-3-title">腰椎椎間盤減壓微創手術 (Lumbar Microdiscectomy)</h4>
+                        <p data-i18n="surg-3-desc">改善長期下背痛及右下肢放射性神經痛</p>
+                    </div>
+                    <div class="timeline-date">2015-11</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 長期用藥史 Medication History -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fa-solid fa-pills"></i>
+                <span data-i18n="sec-medication">目前長期用藥清單 (Current Chronic Medications)</span>
+            </div>
+            <div class="tag-list">
+                <span class="medical-tag"><i class="fa-solid fa-prescription-bottle-medical"></i> <span data-i18n="med-1">降血壓藥：Valsartan 80mg (每日一顆)</span></span>
+                <span class="medical-tag"><i class="fa-solid fa-prescription-bottle-medical"></i> <span data-i18n="med-2">降血糖藥：Metformin 500mg (每日兩次)</span></span>
+                <span class="medical-tag"><i class="fa-solid fa-prescription-bottle-medical"></i> <span data-i18n="med-3">降血脂藥：Atorvastatin 10mg (夜間服用)</span></span>
+                <span class="medical-tag"><i class="fa-solid fa-prescription-bottle-medical"></i> <span data-i18n="med-4">抗血小板藥：Clopidogrel 75mg (預防血栓)</span></span>
+                <span class="medical-tag"><i class="fa-solid fa-prescription-bottle-medical"></i> <span data-i18n="med-5">保鈣及骨質疏鬆：Alendronate (每周一次)</span></span>
+            </div>
+        </div>
+
+        <!-- 6. 遺忘備忘錄與長者特殊照護須知 Notes -->
+        <div class="section-card">
+            <div class="section-header">
+                <i class="fa-solid fa-notes-medical"></i>
+                <span data-i18n="sec-others">長者照護備忘與遺忘須知 (Special Care & Emergency Notes)</span>
+            </div>
+            <div class="info-box" style="width: 100%;">
+                <div class="val" style="font-size: 0.95rem; line-height: 1.8; color: var(--text-muted);" data-i18n="val-others">
+                    • <strong>聽力狀況：</strong>雙耳配戴數位助聽器（左耳/右耳），對話時請放慢語速並清晰發音。<br>
+                    • <strong>移動安全：</strong>因平衡感較差，如廁及夜間起床需有人從旁協助扶持，嚴防跌倒骨折。<br>
+                    • <strong>用藥安全：</strong>有輕微健忘情形，藥物均由家屬分裝於週藥盒中定時服用。<br>
+                    • <strong>緊急醫療：</strong>若發生低血糖（冒冷汗、發抖）或胸悶，請立即給予口服含糖果汁並送醫。
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 頁尾 -->
+    <div class="footer-note" data-i18n="footer-text">
+        🔒 本高齡醫療病歷僅儲存於本機端，供跨國旅遊或緊急醫療轉診使用。
+    </div>
+</div>
+
+<script>
+    // 多國語言辭典資料庫 (中、英、日、韓、越)
+    const translations = {
+        zh: {
+            "ui-app-title": "高齡者隨身智慧電子病歷",
+            "ui-app-subtitle": "Senior Emergency Global Health Record",
+            "lbl-name": "姓名 / Full Name",
+            "lbl-dob": "出生年月日 / Age",
+            "lbl-blood": "血型 / Blood Type",
+            "lbl-emergency": "緊急聯絡人 / Contact",
+            "emg-title": "植入式醫療器材警示 (Implant Alert)",
+            "emg-desc": "患者體內裝有心臟心律調節器（Pacemaker），請避免進行強磁場 MRI 掃描。",
+            "emg-call": "撥打緊急家屬電話",
+            "sec-personal": "個人與生理史 (Personal & Lifestyle History)",
+            "lbl-mobility": "行動能力 / Mobility",
+            "val-mobility": "使用四腳拐杖輔助行走 (Quad Cane)",
+            "lbl-cognition": "認知狀態 / Cognition",
+            "val-cognition": "輕度認知功能退化 (Mild Cognitive Impairment)",
+            "lbl-allergy": "藥物過敏 / Drug Allergies",
+            "val-allergy": "盤尼西林、阿斯匹靈 (Penicillin, Aspirin)",
+            "lbl-diet": "飲食習慣 / Diet & Swallowing",
+            "val-diet": "軟質地飲食、小口慢食 (Soft Diet)",
+            "sec-chronic": "慢性病與重大疾病史 (Chronic Disease History)",
+            "chr-1": "第 2 型糖尿病合併周邊神經病變 (Type 2 Diabetes)",
+            "chr-2": "原發性高血壓第 2 期 (Essential Hypertension Stage 2)",
+            "chr-3": "慢性腎臟病第 3 期 (CKD Stage 3)",
+            "chr-4": "退化性膝關節炎 (Osteoarthritis of Knees)",
+            "sec-family": "家族遺傳病史 (Family Medical History)",
+            "fam-1": "已故父親：腦中風病史 (Father: Stroke History)",
+            "fam-2": "已故母親：阿茲海默症 (Mother: Alzheimer's Disease)",
+            "sec-surgery": "手術、外傷與重大住院紀錄 (Surgical & Hospitalization History)",
+            "surg-1-title": "心臟心律調節器植入術 (Permanent Pacemaker Implantation)",
+            "surg-1-desc": "因症狀性心搏過緩於台大醫院施行，定期回診追蹤",
+            "surg-2-title": "右側白內障超音波乳化暨人工水晶體植入 (Cataract Surgery)",
+            "surg-2-desc": "術後視力恢復良好，規律點抗發炎眼藥水",
+            "surg-3-title": "腰椎椎間盤減壓微創手術 (Lumbar Microdiscectomy)",
+            "surg-3-desc": "改善長期下背痛及右下肢放射性神經痛",
+            "sec-medication": "目前長期用藥清單 (Current Chronic Medications)",
+            "med-1": "降血壓藥：Valsartan 80mg (每日一顆)",
+            "med-2": "降血糖藥：Metformin 500mg (每日兩次)",
+            "med-3": "降血脂藥：Atorvastatin 10mg (夜間服用)",
+            "med-4": "抗血小板藥：Clopidogrel 75mg (預防血栓)",
+            "med-5": "保鈣及骨質疏鬆：Alendronate (每周一次)",
+            "sec-others": "長者照護備忘與遺忘須知 (Special Care & Emergency Notes)",
+            "val-others": "• <strong>聽力狀況：</strong>雙耳配戴數位助聽器（左耳/右耳），對話時請放慢語速並清晰發音。<br>• <strong>移動安全：</strong>因平衡感較差，如廁及夜間起床需有人從旁協助扶持，嚴防跌倒骨折。<br>• <strong>用藥安全：</strong>有輕微健忘情形，藥物均由家屬分裝於週藥盒中定時服用。<br>• <strong>緊急醫療：</strong>若發生低血糖（冒冷汗、發抖）或胸悶，請立即給予口服含糖果汁並送醫。",
+            "footer-text": "🔒 本高齡醫療病歷僅儲存於本機端，供跨國旅遊或緊急醫療轉診使用。"
+        },
+        en: {
+            "ui-app-title": "Senior Emergency Global Health Record",
+            "ui-app-subtitle": "Portable Geriatric Medical Profile",
+            "lbl-name": "Full Name",
+            "lbl-dob": "Date of Birth / Age",
+            "lbl-blood": "Blood Type",
+            "lbl-emergency": "Emergency Contact",
+            "emg-title": "IMPLANTED DEVICE ALERT",
+            "emg-desc": "Patient has an implanted cardiac pacemaker. Avoid MRI scans.",
+            "emg-call": "Call Emergency Contact",
+            "sec-personal": "Personal & Physiological History",
+            "lbl-mobility": "Mobility Status",
+            "val-mobility": "Uses Quad Cane for walking assistance",
+            "lbl-cognition": "Cognitive Status",
+            "val-cognition": "Mild Cognitive Impairment (MCI)",
+            "lbl-allergy": "Drug Allergies",
+            "val-allergy": "Penicillin, Aspirin",
+            "lbl-diet": "Dietary & Swallowing",
+            "val-diet": "Soft Diet, Eat slowly in small bites",
+            "sec-chronic": "Chronic Disease History",
+            "chr-1": "Type 2 Diabetes with Peripheral Neuropathy",
+            "chr-2": "Essential Hypertension Stage 2",
+            "chr-3": "Chronic Kidney Disease (CKD) Stage 3",
+            "chr-4": "Osteoarthritis of Both Knees",
+            "sec-family": "Family Medical History",
+            "fam-1": "Late Father: History of Stroke",
+            "fam-2": "Late Mother: Alzheimer's Disease",
+            "sec-surgery": "Surgical & Hospitalization History",
+            "surg-1-title": "Permanent Cardiac Pacemaker Implantation",
+            "surg-1-desc": "Performed for symptomatic bradycardia; regular cardiology follow-ups",
+            "surg-2-title": "Right Eye Cataract Phacoemulsification & IOL",
+            "surg-2-desc": "Good post-op visual recovery; uses anti-inflammatory eye drops",
+            "surg-3-title": "Lumbar Spine Microdiscectomy",
+            "surg-3-desc": "Relieved chronic lower back pain and right leg radiculopathy",
+            "sec-medication": "Current Long-Term Medications",
+            "med-1": "Antihypertensive: Valsartan 80mg (Once daily)",
+            "med-2": "Antidiabetic: Metformin 500mg (Twice daily)",
+            "med-3": "Statin: Atorvastatin 10mg (Taken at bedtime)",
+            "med-4": "Antiplatelet: Clopidogrel 75mg (Thrombosis prevention)",
+            "med-5": "Osteoporosis: Alendronate (Once weekly)",
+            "sec-others": "Special Care & Emergency Notes",
+            "val-others": "• <strong>Hearing:</strong> Wears digital hearing aids in both ears; please speak slowly and clearly.<br>• <strong>Fall Risk:</strong> Poor balance; requires assistance during toileting and nighttime movement to prevent falls.<br>• <strong>Medication Safety:</strong> Mild forgetfulness; medications are pre-sorted into weekly pill boxes by family.<br>• <strong>Emergency Care:</strong> If hypoglycemia (sweating, tremors) or chest tightness occurs, administer oral juice immediately and seek medical attention.",
+            "footer-text": "🔒 Stored securely on your local device for international travel and emergency medical referrals."
+        },
+        ja: {
+            "ui-app-title": "高齢者モバイル電子カルテ",
+            "ui-app-subtitle": "Senior Emergency Global Health Record",
+            "lbl-name": "氏名 / Name",
+            "lbl-dob": "生年月日 / Age",
+            "lbl-blood": "血液型 / Blood Type",
+            "lbl-emergency": "緊急連絡先 / Contact",
+            "emg-title": "植込み型医療機器アラート",
+            "emg-desc": "心臓ペースメーカーが植え込まれています。MRI検査は避けてください。",
+            "emg-call": "緊急連絡先に発信",
+            "sec-personal": "個人・生理歴 (Personal History)",
+            "lbl-mobility": "移動能力 / Mobility",
+            "val-mobility": "4点杖を使用して歩行補助 (Quad Cane)",
+            "lbl-cognition": "認知機能 / Cognition",
+            "val-cognition": "軽度認知障害 (MCI)",
+            "lbl-allergy": "薬物アレルギー / Allergies",
+            "val-allergy": "ペニシリン、アスピリン (Penicillin, Aspirin)",
+            "lbl-diet": "食事・嚥下 / Diet",
+            "val-diet": "軟菜食、ゆっくり少量ずつ摂取 (Soft Diet)",
+            "sec-chronic": "慢性疾患の既往歴 (Chronic Disease History)",
+            "chr-1": "2型糖尿病（末梢神経障害合併） (Type 2 Diabetes)",
+            "chr-2": "本態性高血圧症 ステージ2 (Hypertension Stage 2)",
+            "chr-3": "慢性腎臓病 (CKD) ステージ3",
+            "chr-4": "両膝変形性膝関節症 (Osteoarthritis)",
+            "sec-family": "家族歴 (Family History)",
+            "fam-1": "実父：脳卒中の既往 (Father: Stroke)",
+            "fam-2": "実母：アルツハイマー型認知症 (Mother: Alzheimer's)",
+            "sec-surgery": "手術・入院歴 (Surgical & Hospitalization History)",
+            "surg-1-title": "ペースメーカー植込み術 (Pacemaker Implantation)",
+            "surg-1-desc": "症候性徐脈のため施行、定期的な循環器外来受診",
+            "surg-2-title": "白内障超音波乳化吸引術・眼内レンズ挿入",
+            "surg-2-desc": "術後経過良好、抗炎症目薬を点眼",
+            "surg-3-title": "腰椎椎間板ヘルニア摘出術 (Microdiscectomy)",
+            "surg-3-desc": "下腰痛および右下肢痛の改善目的",
+            "sec-medication": "現在の服薬歴 (Current Medications)",
+            "med-1": "降圧薬：バルサルタン 80mg（1日1回）",
+            "med-2": "糖尿病薬：メトホルミン 500mg（1日2回）",
+            "med-3": "高脂血症薬：アトルバスタチン 10mg（就寝前）",
+            "med-4": "抗血小板薬：クロピドグレル 75mg（血栓予防）",
+            "med-5": "骨粗鬆症薬：アレンドロン酸（週1回）",
+            "sec-others": "高齢者ケアおよび特記事項 (Special Care Notes)",
+            "val-others": "• <strong>聴力：</strong>両耳にデジタル補聴器を装用しています。話すときはゆっくりはっきりお願いします。<br>• <strong>転倒予防：</strong>バランス感覚が低下しているため、トイレや夜間の起き上がり時は介助が必要です。<br>• <strong>服薬管理：</strong>軽度の物忘れがあり、薬は家族が1週間分のピルボックスにセットしています。<br>• <strong>緊急対応：</strong>低血糖（冷汗、震え）や胸部圧迫感がある場合は、直ちに糖分を補給し受診してください。",
+            "footer-text": "🔒 データはデバイス内に安全に保存され、海外旅行や緊急時の医療連携に活用されます。"
+        },
+        ko: {
+            "ui-app-title": "고령자 모바일 스마트 전자의무기록",
+            "ui-app-subtitle": "Senior Emergency Global Health Record",
+            "lbl-name": "이름 / Name",
+            "lbl-dob": "생년월일 / Age",
+            "lbl-blood": "혈액형 / Blood Type",
+            "lbl-emergency": "비상 연락처 / Contact",
+            "emg-title": "이식형 의료기기 경고",
+            "emg-desc": "심박동기(Pacemaker)가 삽입되어 있습니다. MRI 검사를 금합니다.",
+            "emg-call": "비상 연락처 통화",
+            "sec-personal": "개인 및 신체력 (Personal History)",
+            "lbl-mobility": "보행 능력 / Mobility",
+            "val-mobility": "4발 지팡이 보행 보조 (Quad Cane)",
+            "lbl-cognition": "인지 상태 / Cognition",
+            "val-cognition": "경도 인지장애 (MCI)",
+            "lbl-allergy": "약물 알레르기 / Allergies",
+            "val-allergy": "페니실린, 아스피린 (Penicillin, Aspirin)",
+            "lbl-diet": "식이 및 연하 / Diet",
+            "val-diet": "연식, 천천히 소량씩 섭취 (Soft Diet)",
+            "sec-chronic": "만성 질환력 (Chronic Disease History)",
+            "chr-1": "제2형 당뇨병 (말초신경병증 동반)",
+            "chr-2": "본태성 고혈압 2기 (Hypertension Stage 2)",
+            "chr-3": "만성 콩팥병 (CKD) 3기",
+            "chr-4": "양측 무릎 골관절염 (Osteoarthritis)",
+            "sec-family": "가족력 (Family History)",
+            "fam-1": "선친: 뇌졸중 병력 (Father: Stroke)",
+            "fam-2": "선모: 알츠하이머 치매 (Mother: Alzheimer's)",
+            "sec-surgery": "수술 및 입원력 (Surgical & Hospitalization History)",
+            "surg-1-title": "영구 심박동기 삽입술 (Pacemaker Implantation)",
+            "surg-1-desc": "증상성 서맥으로 시행, 정기 순환기내과 추적 관찰",
+            "surg-2-title": "우측 백내장 초음파 유화술 및 인공수정체 삽입",
+            "surg-2-desc": "수술 후 시력 회복 양호, 항염증 안약 점안 중",
+            "surg-3-title": "요추 추간판 미세절제술 (Microdiscectomy)",
+            "surg-3-desc": "만성 요통 및 우측 하지 방사통 개선 목적",
+            "sec-medication": "현재 장기 복용 약물 (Current Medications)",
+            "med-1": "고혈압약: 발사르탄 80mg (1일 1회)",
+            "med-2": "당뇨병약: 메트포르민 500mg (1일 2회)",
+            "med-3": "고지혈증약: 아토르바스타틴 10mg (취침 전)",
+            "med-4": "항혈소판제: 클로피도그렐 75mg (혈전 예방)",
+            "med-5": "골다공증약: 알렌드로네이트 (주 1회)",
+            "sec-others": "고령자 돌봄 및 특이사항 (Special Care Notes)",
+            "val-others": "• <strong>청력 상태:</strong> 양쪽 귀에 디지털 보청기 착용. 대화 시 천천히 명확하게 말씀해 주세요.<br>• <strong>낙상 주의:</strong> 균형 감각이 저하되어 화장실 이용 및 야간 기상 시 부축이 필요합니다.<br>• <strong>복약 안전:</strong> 경미한 건망증이 있어 보호자가 주간 약통에 미리 분류해 둠.<br>• <strong>응급 대처:</strong> 저혈당(식은땀, 떨림) 또는 흉부 압박감 발생 시 즉시 당류를 공급하고 내원하세요.",
+            "footer-text": "🔒 기기 내에만 안전하게 저장되며, 해외여행 및 응급 의료 이송 시 활용됩니다."
+        },
+        vi: {
+            "ui-app-title": "Hồ sơ Bệnh án Điện tử Người cao tuổi",
+            "ui-app-subtitle": "Senior Emergency Global Health Record",
+            "lbl-name": "Họ và tên / Name",
+            "lbl-dob": "Ngày sinh / Age",
+            "lbl-blood": "Nhóm máu / Blood Type",
+            "lbl-emergency": "Liên hệ khẩn cấp / Contact",
+            "emg-title": "CẢNH BÁO THIẾT BỊ CẤY GHÉP",
+            "emg-desc": "Bệnh nhân được cấy máy tạo nhịp tim. Tránh chụp cộng hưởng từ (MRI).",
+            "emg-call": "Gọi cho người nhà khẩn cấp",
+            "sec-personal": "Tiền sử Cá nhân & Sinh lý",
+            "lbl-mobility": "Khả năng vận động",
+            "val-mobility": "Sử dụng gậy 4 chân hỗ trợ đi lại (Quad Cane)",
+            "lbl-cognition": "Trạng thái nhận thức",
+            "val-cognition": "Suy giảm nhận thức nhẹ (MCI)",
+            "lbl-allergy": "Dị ứng thuốc",
+            "val-allergy": "Penicillin, Aspirin",
+            "lbl-diet": "Chế độ ăn uống",
+            "val-diet": "Thức ăn mềm, nhai chậm từng miếng nhỏ",
+            "sec-chronic": "Tiền sử Bệnh Mãn tính",
+            "chr-1": "Tiểu đường tuýp 2 kèm biến chứng thần kinh ngoại biên",
+            "chr-2": "Tăng huyết áp nguyên phát độ 2",
+            "chr-3": "Bệnh thận mạn giai đoạn 3 (CKD)",
+            "chr-4": "Thoái hóa khớp gối hai bên",
+            "sec-family": "Tiền sử Gia đình",
+            "fam-1": "Bố (đã mất): Tiền sử tai biến mạch máu não (Stroke)",
+            "fam-2": "Mẹ (đã mất): Bệnh Alzheimer",
+            "sec-surgery": "Tiền sử Phẫu thuật & Nhập viện",
+            "surg-1-title": "Phẫu thuật cấy máy tạo nhịp tim vĩnh viễn",
+            "surg-1-desc": "Thực hiện do nhịp chậm có triệu chứng; tái khám tim mạch định kỳ",
+            "surg-2-title": "Phẫu thuật Phaco đục thủy tinh thể mắt phải",
+            "surg-2-desc": "Hồi phục thị lực tốt, nhỏ thuốc kháng viêm định kỳ",
+            "surg-3-title": "Phẫu thuật vi phẫu thoát vị đĩa đệm thắt lưng",
+            "surg-3-desc": "Cải thiện đau lưng mãn tính và đau lan chi dưới",
+            "sec-medication": "Danh sách Thuốc Điều trị Mãn tính",
+            "med-1": "Thuốc huyết áp: Valsartan 80mg (Uống 1 viên/ngày)",
+            "med-2": "Thuốc tiểu đường: Metformin 500mg (Uống 2 lần/ngày)",
+            "med-3": "Thuốc mỡ máu: Atorvastatin 10mg (Uống trước khi ngủ)",
+            "med-4": "Thuốc chống kết tập tiểu cầu: Clopidogrel 75mg",
+            "med-5": "Thuốc loãng xương: Alendronate (Uống 1 lần/tuần)",
+            "sec-others": "Ghi chú Chăm sóc Đặc biệt & Cấp cứu",
+            "val-others": "• <strong>Thính lực:</strong> Đeo máy trợ thính kỹ thuật số cả hai tai; vui lòng nói chậm và rõ ràng.<br>• <strong>Nguy cơ té ngã:</strong> Khả năng giữ thăng bằng kém, cần có người hỗ trợ khi đi vệ sinh và ban đêm.<br>• <strong>An toàn dùng thuốc:</strong> Cóng quên nhẹ, thuốc đã được người nhà chia sẵn vào hộp thuốc theo tuần.<br>• <strong>Xử trí cấp cứu:</strong> Nếu hạ đường huyết (đổ mồ hôi, run rẩy) hoặc tức ngực, cho uống nước trái cây ngay và đưa đi viện.",
+            "footer-text": "🔒 Dữ liệu được lưu trữ an toàn trên thiết bị của bạn, phục vụ du lịch quốc tế và cấp cứu."
+        }
+    };
+
+    // 語言切換核心函式
+    function switchLanguage(lang) {
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang] && translations[lang][key]) {
+                el.innerHTML = translations[lang][key];
+            }
+        });
+
+        document.documentElement.lang = lang;
+    }
+</script>
+
+</body>
+</html>
